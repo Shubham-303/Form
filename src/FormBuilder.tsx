@@ -1,16 +1,17 @@
 import React from 'react';
 import { Fieldset, Grid } from '@mantine/core';
-import AddProperty from './AddPRoperty';
 import { Item } from '../helpers';
+import { Control, FieldErrors, FieldValues } from 'react-hook-form';
+import AddProperty from './AddPRoperty';
 
-interface PersonalInformationFieldsetProps {
+interface FormBuilderProps {
   title: string;
   inputItems: Item[];
-  formData: { [key: string]: any };
-  onChange: (updatedField: { [key: string]: any }) => void;
+  control: Control<FieldValues>; // Use Control type
+  errors: FieldErrors<FieldValues>; // Correct errors type
 }
 
-const FormBuilder: React.FC<PersonalInformationFieldsetProps> = ({ inputItems, formData, onChange, title }) => {
+const FormBuilder: React.FC<FormBuilderProps> = ({ inputItems, control, errors, title }) => {
   return (
     <Fieldset legend={title} m={10}>
       <Grid>
@@ -18,8 +19,8 @@ const FormBuilder: React.FC<PersonalInformationFieldsetProps> = ({ inputItems, f
           <AddProperty
             key={item.name}
             item={item}
-            onChange={onChange}
-            data={formData}
+            control={control}
+            errors={errors}
           />
         ))}
       </Grid>

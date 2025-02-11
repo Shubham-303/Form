@@ -1,15 +1,10 @@
-// App.tsx
-import { useState } from 'react';
-import { MantineProvider, createTheme, Button } from '@mantine/core';
-import { Item } from '../helpers';
+import { Button } from '@mantine/core';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import FormBuilder from './FormBuilder';
+import { schema } from './Components/validationSchema';
 
-// Define the theme
-const theme = createTheme({
-  // Define your theme here if needed
-});
-
-const inputItems: Item[] = [
+const inputItems = [
   {
     type: 'inputField',
     name: 'name',
@@ -36,96 +31,27 @@ const inputItems: Item[] = [
   },
 ];
 
-const anotherInputItems: Item[] = [
-  {
-    type: 'inputField',
-    name: 'anotherName',
-    label: 'Name',
-    description: 'Your Other name',
-    placeholder: 'Enter your Other name',
-    gridSpan: 4,
-  },
-  {
-    type: 'staticSelect',
-    name: 'gender',
-    label: 'Gender ',
-    description: 'Select your Gender',
-    options: ['male', 'female', 'not a gender'],
-    gridSpan: 4,
-  },
-];
-
-const a: Item[] = [
-  {
-    type: 'inputField',
-    name: 'anotherName',
-    label: 'Name',
-    description: 'Your Other name',
-    placeholder: 'Enter your Other name',
-    gridSpan: 3,
-  },
-  {
-    type: 'staticSelect',
-    name: 'gender',
-    label: 'Gender ',
-    description: 'Select your Gender',
-    options: ['male', 'female', 'not a gender'],
-    gridSpan: 3,
-  },
-  {
-    type: 'inputField',
-    name: 'anotherName',
-    label: 'Name',
-    description: 'Your Other name',
-    placeholder: 'Enter your Other name',
-    gridSpan: 3,
-  },
-  {
-    type: 'staticSelect',
-    name: 'gender',
-    label: 'Gender ',
-    description: 'Select your Gender',
-    options: ['male', 'female', 'not a gender'],
-    gridSpan: 3,
-  },
-];
-
 function App() {
-  const [formData, setFormData] = useState<{ [key: string]: any }>({
-    name: '',
-    profilePicture: undefined,
-    framework: 'React',
+  const { handleSubmit, control, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
   });
 
-  const handleChange = (updatedField: { [key: string]: any }) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      ...updatedField,
-    }));
+  const onSubmit = (data: any) => {
+    console.log('Form submitted successfully:', data);
   };
 
   return (
-    <MantineProvider theme={theme}>
+    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <FormBuilder
-        title="Personal information"
-        inputItems={inputItems} 
-        formData={formData} 
-        onChange={handleChange}
+        title="Personal Information"
+        inputItems={inputItems}
+        control={control}
+        errors={errors}
       />
-      <FormBuilder
-        title="another information"
-        inputItems={anotherInputItems} 
-        formData={formData} 
-        onChange={handleChange}
-      />
-      <FormBuilder
-        title="lilo "
-        inputItems={a} 
-        formData={formData} 
-        onChange={handleChange}
-      />
-      <Button onClick={() => console.log(formData)}>Submit</Button>
-    </MantineProvider>
+      <Button type='submit'>Submit</Button>
+      </form>
+    </>
   );
 }
 

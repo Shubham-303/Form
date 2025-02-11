@@ -1,67 +1,74 @@
 import React from 'react';
-import {
-  TextInput,
-  FileInput,
-  NativeSelect,
-  Grid,
-} from "@mantine/core";
-import { INPUT_FIELD, FILE_INPUT_FIELD, STATIC_SELECT, Item } from "../helpers";
+import { TextInput, FileInput, NativeSelect, Grid, Text } from '@mantine/core';
+import { useController } from 'react-hook-form'; // import useController hook from react-hook-form
+import { Item } from "../helpers";
 
 interface AddPropertyProps {
   item: Item;
-  onChange: (e: { [key: string]: any }) => void;
-  data: { [key: string]: any };  // Add the data prop type definition
+  control: any; // Control from react-hook-form
+  errors: any; // Errors from react-hook-form
 }
 
-const AddProperty: React.FC<AddPropertyProps> = ({ item, onChange, data }) => {
+const AddProperty: React.FC<AddPropertyProps> = ({ item, control, errors }) => {
+  const { field } = useController({
+    name: item.name, // field name
+    control, // the control passed from FormBuilder
+    defaultValue: '', // initial value if any
+  });
+
+  const error = errors[item.name]; // Access specific field error
+
   const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange({ [item.name]: e.target.value });
+    field.onChange(e.target.value); // Manually trigger change
   };
 
   const handleFileInputChange = (file: File | null) => {
-    onChange({ [item.name]: file });
+    field.onChange(file); // Manually trigger change
   };
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange({ [item.name]: e.target.value });
+    field.onChange(e.target.value); // Manually trigger change
   };
 
   switch (item.type) {
-    case INPUT_FIELD:
+    case 'inputField':
       return (
         <Grid.Col span={item.gridSpan}>
           <TextInput
             label={item.label}
             description={item.description}
             placeholder={item.placeholder}
-            value={data[item.name] || ''}
-            onChange={handleTextInputChange} 
+            value={field.value || ''}
+            onChange={handleTextInputChange}
+            error={error?.message} // Show error message if any
           />
         </Grid.Col>
       );
 
-    case FILE_INPUT_FIELD:
+    case 'fileInputField':
       return (
         <Grid.Col span={item.gridSpan}>
           <FileInput
             label={item.label}
             description={item.description}
             placeholder={item.placeholder}
-            value={data[item.name] || undefined}
+            value={field.value || undefined}
             onChange={handleFileInputChange}
+            error={error?.message} // Show error message if any
           />
         </Grid.Col>
       );
 
-    case STATIC_SELECT:
+    case 'staticSelect':
       return (
         <Grid.Col span={item.gridSpan}>
           <NativeSelect
-            value={data[item.name] || ''}  
-            onChange={handleSelectChange} 
-            data={item.options || []} 
+            value={field.value || ''}
+            onChange={handleSelectChange}
+            data={item.options || []}
             label={item.label}
             description={item.description}
+            error={error?.message} // Show error message if any
           />
         </Grid.Col>
       );
