@@ -10,4 +10,5 @@ export interface Item {
   placeholder?: string;
   options?: string[];
   gridSpan?: number;
+  inputStyle?: any
 }
